@@ -57,31 +57,36 @@
             align-items: center;
             width: 100%;
             height: 100%;
+            gap: 0; /* Ensure no extra gap between pages */
         }
         .page {
             max-width: 45%;
             max-height: 90%;
-            margin: 0 5px;
-            border: 1px solid #ddd;
+            margin: 0px;
+            border: none;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             object-fit: contain;
         }
-        .page.portrait {
-            max-width: 90%;
-            max-height: 95%;
-            margin: 0; /* Remove any default margins */
-            justify-content: center;
-        }
-        .booklet-container.portrait-mode {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+@media (max-width: 768px) and (orientation: portrait) {
+    .booklet {
+        justify-content: center; /* Center the single page */
+        align-items: center;
+    }
+
+    .page {
+        max-width: 90%; /* Adjust width for portrait mode */
+        margin: 0 auto; /* Center the single page horizontally */
+    }
+
+    .page.right {
+        display: none; /* Hide the right page in portrait mode */
+    }
 }
-        .arrow {
+    .arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.2);
             color: white;
             border: none;
             font-size: 24px;
@@ -91,7 +96,7 @@
             transition: background 0.3s ease;
         }
         .arrow:hover {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.3);
         }
         .arrow.left {
             left: 10px;
@@ -170,13 +175,11 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 40px;
-            height: 40px;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
             border: none;
             color: white;
-            font-size: 24px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
             z-index: 12;
         }
@@ -192,8 +195,8 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            z-index: 9;
-            display: none;
+            z-index: 11;
+            display: flex; /* Keep it visible by default */
         }
         #infoPopupContent {
             margin: 20px;
@@ -234,6 +237,86 @@
             cursor: pointer;
             z-index: 12;
         }
+        /* Center-Bottom Button Styling */
+    #centerBottomButton {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    width: 50px;
+    height: 50px;
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 12;
+}
+
+#centerBottomPopup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    display: none;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center; /* Center horizontally */
+    justify-content: flex-start; /* Start from the top */
+    text-align: center; /* Center text alignment */
+    z-index: 11;
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 50px 10px 70px; /* Add padding: top, horizontal, and bottom */
+    box-sizing: border-box; /* Ensure padding is included in height/width */
+}
+
+#centerBottomPopupContent {
+    margin: 20px;
+    max-height: calc(100vh - 120px); /* Ensure content doesn't exceed screen height */
+    overflow-y: auto; /* Scrollable content area */
+    text-align: center;
+    padding-top: 50px; /* Add extra space at the top for scrolling */
+    padding-bottom: 50px; /* Add extra space at the bottom for scrolling */
+}
+
+        }
+        #centerBottomPopupContent h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #centerBottomPopupContent p {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        #centerBottomPopupClose {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 12;
+        }
+        #centerBottomPopupClose:hover {
+            background: rgba(255, 255, 255, 0.8);
+}
+
+/* Show the button only in portrait mode */
+@media (max-width: 768px) and (orientation: portrait) {
+    #centerBottomButton {
+        display: flex;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -259,6 +342,7 @@
         <div id="overlay-image"></div>
         <!-- Menu Button -->
         <button id="menuButton" onclick="toggleMenu()">Menu</button>
+                       
       <!-- Menu -->
         <div id="menu">
             <div id="menuContent">
@@ -268,24 +352,41 @@
                 <a href="https://josflint.github.io/RE-VIEWING_THE_GAZE_Filter/">Camera Filter</a>
               </div>
             </div>
+        
               <!-- Information Button -->
-        <button id="infoButton" onclick="toggleInfo()">&#9432;</button>
+        <button id="infoButton" onclick="toggleInfo()">Info</button>
       <!-- Information Popup -->
         <div id="infoPopup">
             <div>
                 <h1>Information</h1>
-                <p>This is some information about the booklet.</p>
+                <p>This interactive booklet is from Jo Flint's 2024 exhibition titled Re-Viewing the Gaze.<br><br>
+                Interface: <br><br>
+                Arrows are used to navigate through the pages.<br><br>
+                "Dark Mode" button enables dark mode.<br><br>
+                "Info" button displays this pop up. <br><br>
+                "Menu" button displays links to project and artist.<br><br>
+                "Aa" button (only on mobile), displays reading asist pop up. <br><br>
+                "Overlay" button enables project's interactive design; for more details please see page 1 of the booklet.<br><br>
+                On mobile, rotate the screen to enable two page spread.<br><br>
+                Press 'esc' on computer or back on mobile to exit full screen, returning to enter screen.<br><br>
+                Please press the "Information" button at the top right to exit this popup and return to the booklet.
+            </p>
         <!-- Information Button -->
-        <button id="infoButton" onclick="toggleInfo()">&#9432;</button>
-        <!-- Information Popup -->
-        <div id="infoPopup">
-            <div id="infoPopupContent">
-                <h1>About the Booklet</h1>
-                <p>This interactive booklet explores themes of identity, perception, and societal norms. Use the arrows or swipe gestures to navigate through the pages.</p>
-            </div>
-            <button id="infoPopupClose" onclick="toggleInfo()">Close</button>
-        </div>
+        <button id="infoButton" onclick="toggleInfo()">Info</button>
     </div>
+    </div>
+
+<!-- CenterBottomButton -->
+        <button id="centerBottomButton" onclick="togglecenterBottomPopup()">Aa</button>
+        
+      <!-- Center Bottom Popup -->
+<div id="centerBottomPopup" style="display: none;">
+    <div id="centerBottomPopupContent">
+        <!-- Content will be dynamically updated -->
+        <h1>Page Contents</h1>
+        <p>Welcome to the interactive booklet!</p>
+    </div>
+</div>
 
     <script>
     let currentPage = 1;
@@ -331,52 +432,145 @@
     }
 
     // Function to update the pages displayed
-    function updatePages() {
-        const leftPage = document.getElementById('left-page');
-        const rightPage = document.getElementById('right-page');
-        const bookletContainer = document.getElementById('booklet-container');
+function updatePages() {
+    const leftPage = document.getElementById('left-page');
+    const rightPage = document.getElementById('right-page');
+    const bookletContainer = document.getElementById('booklet-container');
 
-        if (currentPage === 1) {
-            leftPage.src = preloadedImages[0].src; // Use preloaded image
-            rightPage.style.visibility = 'hidden';
-        } else if (isPortraitMode()) {
-            bookletContainer.classList.add("portrait-mode");
-            leftPage.src = preloadedImages[currentPage - 1].src; // Use preloaded image
-            leftPage.classList.add("portrait");
-            rightPage.style.visibility = 'hidden';
+    // Handle single-page cover
+    if (currentPage === 1) {
+        leftPage.src = preloadedImages[0].src; // Cover page
+        leftPage.style.visibility = 'visible';
+        rightPage.style.visibility = 'hidden'; // Hide right page
+        return;
+    }
+
+    if (isPortraitMode()) {
+        // Portrait mode: Show one page at a time
+        leftPage.src = preloadedImages[currentPage - 1].src; // Current page
+        leftPage.style.visibility = 'visible';
+        rightPage.style.visibility = 'hidden'; // Always hide right page
+    } else {
+        // Landscape mode: Show two-page spread
+        leftPage.src = preloadedImages[currentPage - 1].src; // Left page
+        leftPage.style.visibility = 'visible';
+
+        if (currentPage < totalPages) {
+            rightPage.src = preloadedImages[currentPage].src; // Right page
+            rightPage.style.visibility = 'visible';
         } else {
-            bookletContainer.classList.remove("portrait-mode");
-            leftPage.src = preloadedImages[currentPage - 1].src; // Use preloaded image
-            leftPage.classList.remove("portrait");
-            if (currentPage < totalPages) {
-                rightPage.src = preloadedImages[currentPage].src; // Use preloaded image
-                rightPage.style.visibility = 'visible';
-            } else {
-                rightPage.style.visibility = 'hidden';
-            }
+            rightPage.style.visibility = 'hidden'; // Hide right page at the end
         }
     }
-
-    // Functions to navigate pages
-    function prevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            updatePages();
-        }
+    
+    // If the popup is open, update its content
+    const centerBottomPopup = document.getElementById("centerBottomPopup");
+    if (centerBottomPopup.style.display === "flex") {
+        updatecenterBottomPopupContent();
     }
+}
 
-    function nextPage() {
+const pageTexts = {
+    1: "Front Cover Page: <br><br> RE-VIEWING THE GAZE <br> Gender, Sex, Sexuality <br> Fine Art Catalogue <br> Jo Flint",
+    2: "Re-viewing the Gaze <br><br> Exhibition Catalogue <br><br> For this exhibition, the viewer is invited to walk around the exhibit and view each piece of imagery and attempt to recognise what the artwork presents in terms of Gender, Sex, and Sexuality. Does the artwork present these concepts as distinct from one another, blend into one another, or act as synonymous to one another? <br><br> After this, the spectator is again invited to view the exhibit, but now with the red-tinted eyewear provided and view the artwork in a new perspective. Does anything new become apparent, does the conversation around the distinctiveness or synonymous nature of Gender, Sex, and Sexuality become clearer or less so? <br><br> It is the hope of this exhibition that through the fundamental participation of the viewer, new discussions can be had not just about how we see Gender, Sex, and Sexuality but upon how we can reflect on how we contextualise what we see in general. Exposing the often over-simplified nature of social discourse which inevitably leads to exclusion, discrimination and spread of misinformation, and disinformation.",
+    3: "Gender, <br><br> <s>Sex,</s> <br><br> <s>and Sexuality.</s> <br><br> Gender, as opposed to Sex, and Sexuality are the forms of expressions of masculinity, femininity, and/or androgyny that we observe and relate to to ourselves within society. Gender in all forms, whether it be man, woman, or non-binary, are transfixed terms subject to geographical location, cultural values, and time period; making Gender the self-reflective perception of self within the Gendered world around us, rather than bound by Sex, or Sexuality.",
+    4: "'Gender, Sex, and Sexuality - Gender #2', 2024. <br><br> Artwork.",
+    5: "'Gender, Sex, and Sexuality - Gender #2', 2024. <br><br> Artwork details.",
+    6: "'Gender, Sex, and Sexuality Diptych - Gender & Sex #1 (Gender)', 2024. <br><br> Artwork.",
+    7: "'Gender, Sex, and Sexuality Diptych - Gender & Sex #1 (Sex)', 2024. <br><br> Artwork.",
+    8: "<s>Gender,</s> <br><br> Sex, <br><br> <s>and Sexuality.</s> <br><br> Sex, as opposed to Gender, and Sexuality is the chromosomal, hormonal, and anatomical structure out bodies take form in. Although commonly described as binary, Male, and Female, it is a complex biological system which sees overlapping characteristics of these two binaries resulting in what is commonly referred to as Intersex. Because of this, Sex is more acutely reffered to as being assigned to a person at birth upon the observation of present Sex Characteristics.",
+    9: "'Gender, Sex, and Sexuality - Sex #1', 2024. <br><br> Artwork.",
+    10: "'Gender, Sex, and Sexuality Diptych - Gender & Sex #2 (Gender)', 2024. <br><br> Artwork.",
+    11: "'Gender, Sex, and Sexuality Diptych - Gender & Sex #2 (Sex)', 2024. <br><br> Artwork.",
+    12: "<s>Gender,</s> <br><br> <s>Sex,</s> <br><br> and Sexuality. <br><br> Sexuality, as opposed to Gender, and Sex is the Romantic and/or Sexual attraction towards another person. It is commonly based upon physical, and emotional characteristics, and/or personality of another. In instances where individuals do not feel one or more of these forms of attraction they could be Asexual, Aromantic, or both. Other Sexualities may also include (but not limited to): Heterosexuality, Homosexuality, and Bisexuality. Each form of Sexuality is unique to each person's desires and attractions.",
+    13: "'Gender, Sex, and Sexuality - Sexuality #1', 2024. <br><br> Artwork.",
+    14: "'Gender, Sex, and Sexuality Triptych - Gender, Sex, and Sexuality #1 (Gender)', 2024. <br><br> Artwork.",
+    15: "'Gender, Sex, and Sexuality Triptych - Gender, Sex, and Sexuality #1 (Sex)', 2024. <br><br> Artwork.",
+    16: "'Gender, Sex, and Sexuality Triptych - Gender, Sex, and Sexuality #1 (Sexuality)', 2024. <br><br> Artwork.",
+    17: "'Gender, Sex, and Sexuality Triptych - Gender, Sex, and Sexuality #1 (Collection)', 2024. <br><br> Artwork Comparisons.",
+    18: "'Gender, Sex, and Sexuality Triptych - Gender, Gender, and Gender #1 (Gender #1)', 2024. <br><br> Artwork.",
+    19: "'Gender, Sex, and Sexuality Triptych - Gender, Gender, and Gender #1 (Gender #2)', 2024. <br><br> Artwork.",
+    20: "'Gender, Sex, and Sexuality Triptych - Gender, Gender, and Gender #1 (Gender #3)', 2024. <br><br> Artwork.",
+    21: "'Gender, Sex, and Sexuality Triptych - Gender, Gender, and Gender #1 (Collection)', 2024. <br><br> Artwork details.",
+    22: "About the artist. <br><br> Jo Flint graduated from Loughborough University with a BA Fine Art degree before being awarded a ABF Fellowship and going onto study an MA in Graphics Design & Visualisation again at Loughborough University on Scholarship. Gender and discussing Social Inequality in the Arts was something that steered her work ever since her Foundation year at Batley Collage of Arts in which she would begin her journey into Portrait Photography. <br><br> This exhibition was influenced by her profound influential MA tutors who guided her to utilise her Fine Arts background with complementing Graphical Design techniques. <br><br> Past Exhibitions. <br><br> Heckmondlight Art Festival. 2018. <br> dis slash comfort. 2023. <br> Loughborough Ceramic Open. 2023. <br><br> Contacts. <br><br> Business Email: Josflint_art@hotmail.com. <br> Website: Josflint.com. (Currently Down). <br> Instagram: Josflint_Art.",
+    23: "Upcoming next exhibition.",
+    24: "Back Cover Page: <br><br> Re-viewing the Gaze <br> Fine Art Catalogue <br> Exhibition 2024 <br><br> An exhibition founded upon tackling the surrounding misinformation and disinformation plaguing politics and social dialogue, this exhibition presents and reviews a critical analysis into how we see and contextualise Gender, Sex, and Sexuality. Taking a keen eye into these fundamental concepts, the exhibition hopes to expose the distinct divergence between each through view participation. The spectator is invited to gaze upon each artwork's surface level coalescent expression of these three concepts before taking a deeper look into how Gender, Sex, and Sexuality warrant their own respective observation.",
+    default: "This page has no specific information available."
+};
+
+// Function to update popup content
+function updatecenterBottomPopupContent() {
+    const centerBottomPopupContent = document.getElementById("centerBottomPopupContent");
+    const content = pageTexts[currentPage] || pageTexts.default;
+    centerBottomPopupContent.innerHTML = `
+        <h1>Page Contents</h1>
+        <p>${content}</p>
+    `;
+}
+
+// Function to toggle the visibility of the popup
+function togglecenterBottomPopup() {
+    const centerBottomPopup = document.getElementById("centerBottomPopup");
+    const isHidden = centerBottomPopup.style.display === "none" || centerBottomPopup.style.display === "";
+    
+    if (isHidden) {
+        updatecenterBottomPopupContent(); // Update content when opening the popup
+        centerBottomPopup.style.display = "flex"; // Show popup
+    } else {
+        centerBottomPopup.style.display = "none"; // Hide popup
+    }
+}
+        
+function nextPage() {
+    if (isPortraitMode()) {
+        // Portrait Mode: Move forward by one page
         if (currentPage < totalPages) {
             currentPage++;
             updatePages();
         }
+    } else {
+        // Landscape Mode: Move forward by two pages
+        if (currentPage === 1) {
+            currentPage++; // Move from cover to first spread
+        } else if (currentPage < totalPages - 1) {
+            currentPage += 2; // Move forward by two pages
+        } else if (currentPage === totalPages - 1) {
+            currentPage++; // Handle edge case: last single page in landscape
+        }
+        updatePages();
     }
+}
+
+function prevPage() {
+    if (isPortraitMode()) {
+        // Portrait Mode: Move backward by one page
+        if (currentPage > 1) {
+            currentPage--;
+            updatePages();
+        }
+    } else {
+        // Landscape Mode: Move backward by two pages
+        if (currentPage === 2) {
+            currentPage--; // Handle edge case: return to the cover
+        } else if (currentPage > 2) {
+            currentPage -= 2; // Move backward by two pages
+        }
+        updatePages();
+    }
+}
+
+window.addEventListener('resize', () => {
+    updatePages(); // Adjust the layout when resizing the window or rotating the device
+});
 
     // Toggle menu visibility
     function toggleMenu() {
         const menu = document.getElementById('menu');
         menu.classList.toggle('open');
     }
+    function centerButtonClick() {
+    alert('This is the center-bottom button!');
+}
 
     // Toggle overlay visibility
     function toggleOverlay() {
@@ -397,6 +591,12 @@
         const infoPopup = document.getElementById('infoPopup');
         infoPopup.style.display = infoPopup.style.display === 'none' ? 'flex' : 'none';
     }
+        
+    // Toggle Centre Bottom popup
+    function togglecentrebottominfo() {
+        const centerBottomPopup = document.getElementById('centerBottomPopup');
+        centerBottomPopup.style.display = centerBottomPopup.style.display === 'none' ? 'flex' : 'none';
+    }
 
     // Add event listener for resizing to ensure layout adjusts
     window.addEventListener("resize", updatePages);
@@ -415,6 +615,7 @@ function handleFullscreenChange() {
     }
 }
 
+        
 updatePages(); // Update pages when the booklet starts
 
         
